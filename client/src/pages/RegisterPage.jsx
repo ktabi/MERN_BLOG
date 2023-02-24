@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 // import axios from 'axios';
 
 
@@ -15,11 +16,11 @@ function RegisterPage() {
         });
         // console.log(response)
         if(response.status == 200){
-          alert("Welcome " + username)
+          alert("Welcome " + username);
         } else {
           alert('Something Went Wrong. Try again')
         }
-  }
+  }   
 
   return (
     <form className='register'>

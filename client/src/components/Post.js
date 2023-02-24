@@ -1,20 +1,26 @@
 import React from 'react'
+// import {formatISO9075} from "date-fns";
+import {format} from "date-fns";
+import { Link } from 'react-router-dom';
 
-function Post() {
+function Post({_id, title, summary, cover, content, createdAt, author}) {
   return (
     <div>
-        
         <div className="post">
           <div className="image">
-          <img src="https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2671&q=80" />
+            <Link to={`/post/${_id}`} >
+              <img src={'http://localhost:3001/'+cover} />
+            </Link>
           </div>
           <div className="texts">
-          <h2> Best Anime to watch</h2>
+            <Link to={`/post/${_id}`}>
+              <h2> {title}</h2>
+            </Link>
           <p className="info">
-            <span className="summary">Slam </span>
-            <time>2023-02-02</time>
+            <a className="author">{author.username}</a>
+            <time>{format(new Date(createdAt), 'MMM d, yyyy HH:mm')}</time>
           </p>
-          <p>lorem25lorem25lssdssjsssssaseget354r</p>
+          <p className='summary'>{summary} </p>
           </div>
         </div>
     </div>

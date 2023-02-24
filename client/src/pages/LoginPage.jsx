@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState , useContext} from 'react'
 import {Navigate} from "react-router-dom";
+import { UserContext } from '../UserContext';
+
 
 function LoginPage() {
 
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [redirect, setRedirect] = useState(false);
+  const {setUserInfo} = useContext(UserContext);
 
   async function login(e) {
     e.preventDefault();
@@ -16,7 +19,10 @@ function LoginPage() {
       credentials: 'include',
     });
     if (response.ok) {
-      setRedirect(true);
+      response.json().then(userInfo => {
+        setUserInfo(userInfo);
+        setRedirect(true);
+      });
     } else {
       alert('wrong credentials!')
     }
