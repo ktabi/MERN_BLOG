@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose  = require('mongoose');
 const bcrypt = require('bcrypt');
 
+
 const User = require('./models/User');
 const Post = require('./models/Post');
 const app = express();
@@ -12,14 +13,15 @@ const multer = require('multer');
 const uploadMiddleware = multer({dest: 'uploads/'})
 //we use fs to help us rename the file being received in the backend
 const fs = require('fs');
+const { json } = require('body-parser');
 
 
 
 // strict query warning keeping it at true
 mongoose.set('strictQuery', true)
 
-// const secret = "asdfghjklqwertyuopzxcvbnm123456789";
-const secret = bcrypt.genSaltSync(10);
+const secret = "asdfghjklqwertyuopzxcvbnm123456789";
+// const secret = bcrypt.genSaltSync(10);
 
 //Middleware
 app.use(cors({credentials:true,origin:'http://localhost:3000'}));
@@ -121,9 +123,39 @@ app.get('/post/:id', async (req, res) => {
 // Fetching all posts
 app.get('/post', async (req, res) => {
     // since we used ref to reference ref User in Post, we can use Populate.
-   res.json(await Post.find().populate('author', ['username']).sort({createdAt: -1}).limit(10));
+   res.json(await Post.find().populate('author', ['username']).sort({createdAt: -1}).limit(30));
    
 });
+
+//Enpoint for Updtaing Post
+app.put('/post', uploadMiddleware.single('file'),async (req, res) => {
+    let newPath = null;
+    if (req.file) {
+        const {originalname, path} = req.file;
+        const parts =  originalname.split('.');
+        const ext = parts[parts.length -1];
+        newPath = path+'.'+ext
+        fs.renameSync(path, newPath);
+    }
+
+    const {token} = req.cookies;
+    jwt.verify(token, secret, {}, async (err, info) => {
+        if (err) throw err;
+        const {id,title, summary, content} = req.body;
+        const postDoc = await Post.findById(id);
+        const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
+        if(!isAuthor) {
+           return res.status(400).json('you are not the author');
+        }
+        await postDoc.update({
+            title, 
+            summary, 
+            content,
+            cover: newPath ? newPath : postDoc.cover,
+    });
+        res.json(postDoc);
+    });
+})
 
 
 
