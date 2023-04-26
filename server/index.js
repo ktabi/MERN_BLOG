@@ -34,7 +34,7 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 
 
 //connecting to mongoose
- mongoose.connect('mongodb+srv://lilslam:password@cluster0.f5zjbaj.mongodb.net/?retryWrites=true&w=majority')
+ mongoose.connect('mongodb+srv://lilslam:"password"@cluster0.f5zjbaj.mongodb.net/?retryWrites=true&w=majority')
 
  //register
 app.post('/register', async(req, res) => {
